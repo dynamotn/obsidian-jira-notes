@@ -68,8 +68,8 @@ export class VaultHelper {
     template: string,
     notename: string,
     app: App
-  ): Promise<TFile>[] {
-    let promisesToCreateNotes: Promise<TFile>[] = [];
+  ): Promise<TFile | void>[] {
+    let promisesToCreateNotes: Promise<TFile | void>[] = [];
     tasks.forEach((task) => {
       if (this.getFileByTaskId(path, task.id, app) == undefined) {
         promisesToCreateNotes.push(this.createTaskNote(path, task, template, notename, app));
@@ -180,6 +180,11 @@ export class VaultHelper {
       content = content.replace(/{{TASK_TESTS}}/g, '');
     }
 
-    return app.vault.create(filepath, content);
+    const file = this.getFileByTaskId(path, task.id);
+    if (file == undefined) {
+      return app.vault.create(filepath, content);
+    } else {
+      return app.vault.modify(file, content);
+    }
   }
 }
