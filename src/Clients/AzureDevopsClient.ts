@@ -155,6 +155,7 @@ export class AzureDevopsClient implements ITfsClient {
             description,
             acceptanceCriteria,
             testScenarios,
+            null,
             dueDate,
             replacedTags
           )

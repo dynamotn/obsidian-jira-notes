@@ -150,6 +150,12 @@ export class VaultHelper {
       .replace(/{{TASK_ASSIGNEDTO}}/g, task.assignedTo)
       .replace(/{{TASK_LINK}}/g, task.link);
 
+    if (task.createdDate != null) {
+      content = content.replace(/{{TASK_CREATED}}/g, task.createdDate);
+    } else {
+      content = content.replace(/{{TASK_CREATED}}/g, '');
+    }
+
     if (task.dueDate != null) {
       content = content.replace(/{{TASK_DUEDATE}}/g, task.dueDate);
     } else {

@@ -113,7 +113,12 @@ export class JiraClient implements ITfsClient {
                 issue.fields['issuetype']['name'],
                 assigneeName,
                 `https://${settings.jiraSettings.baseUrl}/browse/${issue.key}`,
-                issue.fields['description']
+                issue.fields['description'],
+                null,
+                null,
+                null,
+                issue.fields['created'],
+                issue.fields['duedate'],
               )
             );
           });
@@ -194,7 +199,12 @@ export class JiraClient implements ITfsClient {
                 issue.fields['issuetype']['name'],
                 assigneeName,
                 `https://${settings.jiraSettings.baseUrl}/browse/${issue.key}`,
-                issue.fields['description']
+                issue.fields['description'],
+                null,
+                null,
+                null,
+                issue.fields['created'],
+                issue.fields['duedate'],
               );
 
               if (issue.fields['resolution'] != null) {
