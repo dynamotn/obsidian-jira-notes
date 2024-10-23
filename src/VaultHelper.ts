@@ -145,7 +145,7 @@ export class VaultHelper {
     let content = template
       .replace(/{{TASK_ID}}/g, task.id)
       .replace(/{{TASK_TITLE}}/g, task.title)
-      .replace(/{{TASK_STATE}}/g, task.state)
+      .replace(/{{TASK_STATE}}/g, task.state.replace(/ /g,''))
       .replace(/{{TASK_TYPE}}/g, task.type.replace(/ /g, ''))
       .replace(/{{TASK_ASSIGNEDTO}}/g, task.assignedTo)
       .replace(/{{TASK_LINK}}/g, task.link);
