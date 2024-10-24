@@ -2,7 +2,7 @@ import AgileTaskNotesPlugin, { AgileTaskNotesPluginSettingTab, AgileTaskNotesSet
 import { App, normalizePath, requestUrl, Setting } from 'obsidian';
 import { VaultHelper } from 'src/VaultHelper';
 import { ITfsClient } from './ITfsClient';
-import { Task } from 'src/Task';
+import { AzureDevOpsTask } from 'src/Task';
 
 export interface AzureDevopsSettings {
   instance: string;
@@ -110,7 +110,7 @@ export class AzureDevopsClient implements ITfsClient {
         ),
       );
 
-      const tasks: Array<Task> = [];
+      const tasks: Array<AzureDevOpsTask> = [];
       assignedTasks.forEach((task: any) => {
         let assigneeName = 'Unassigned';
         const assignee = task.fields['System.AssignedTo'] ?? null;
@@ -145,7 +145,7 @@ export class AzureDevopsClient implements ITfsClient {
           : 'No description provided';
 
         tasks.push(
-          new Task({
+          new AzureDevOpsTask({
             id: task.id,
             state: task.fields['System.State'],
             title: task.fields['System.Title'],

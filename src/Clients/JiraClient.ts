@@ -1,6 +1,6 @@
 import AgileTaskNotesPlugin, { AgileTaskNotesPluginSettingTab, AgileTaskNotesSettings } from 'main';
 import { App, normalizePath, requestUrl, RequestUrlResponse, Setting, TFile } from 'obsidian';
-import { Task } from 'src/Task';
+import { JiraTask } from 'src/Task';
 import { VaultHelper } from 'src/VaultHelper';
 import { ITfsClient } from './ITfsClient';
 
@@ -43,7 +43,7 @@ export class JiraClient implements ITfsClient {
         'base64',
       );
       headers.Authorization = `Basic ${encoded64Key}`;
-    } else if ((settings.jiraSettings.authmode = 'bearer')) {
+    } else if ((settings.jiraSettings.authmode == 'bearer')) {
       headers.Authorization = `Bearer ${settings.jiraSettings.apiToken}`;
     }
 
@@ -72,7 +72,7 @@ export class JiraClient implements ITfsClient {
         // Ensure folder structure created
         VaultHelper.createFolders(normalizedFolderPath, this.app);
 
-        const tasks: Array<Task> = [];
+        const tasks: Array<JiraTask> = [];
         let issueResponseList: Array<RequestUrlResponse> = [];
 
         if (settings.teamLeaderMode) {
@@ -106,7 +106,7 @@ export class JiraClient implements ITfsClient {
             }
 
             tasks.push(
-              new Task({
+              new JiraTask({
                 id: issue.key,
                 state: issue.fields['status']['name'],
                 title: issue.fields['summary'],
@@ -152,8 +152,8 @@ export class JiraClient implements ITfsClient {
         // Ensure folder structures created
         VaultHelper.createFoldersFromList([normalizedBaseFolderPath, normalizedCompletedfolderPath], this.app);
 
-        const activeTasks: Array<Task> = [];
-        const completedTasks: Array<Task> = [];
+        const activeTasks: Array<JiraTask> = [];
+        const completedTasks: Array<JiraTask> = [];
         let issueResponseList: Array<RequestUrlResponse> = [];
 
         if (settings.teamLeaderMode) {
@@ -189,7 +189,7 @@ export class JiraClient implements ITfsClient {
                 assigneeName = assignee['displayName'];
               }
 
-              const taskObj = new Task({
+              const taskObj = new JiraTask({
                 id: issue.key,
                 state: issue.fields['status']['name'],
                 title: issue.fields['summary'],

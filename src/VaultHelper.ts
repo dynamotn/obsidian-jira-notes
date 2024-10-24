@@ -1,9 +1,9 @@
 import { App, Notice, TFile } from 'obsidian';
-import { Task } from './Task';
+import { Task, JiraTask, AzureDevOpsTask } from './Task';
 
 export class VaultHelper {
-  private static BOARD_TEMPLATE_START: string = '---\n\nkanban-plugin: basic\n\n---\n\n';
-  private static BOARD_TEMPLATE_END: string = '\n%% kanban:settings\n```\n{"kanban-plugin":"basic"}\n```%%"';
+  private static BOARD_TEMPLATE_START = '---\n\nkanban-plugin: basic\n\n---\n\n';
+  private static BOARD_TEMPLATE_END = '\n%% kanban:settings\n```\n{"kanban-plugin":"basic"}\n```%%"';
 
   /**
    * Logs an error and notifies user that an error occured
@@ -47,7 +47,7 @@ export class VaultHelper {
     const projectPath = path.slice(0, path.lastIndexOf('/')); // Remove the specific sprint since files can be in old sprints
 
     for (let i = 0; i < files.length; i++) {
-      let filePath = files[i].path;
+      const filePath = files[i].path;
       if (filePath.startsWith(projectPath) && filePath.contains(id)) {
         return files[i];
       }
@@ -69,7 +69,7 @@ export class VaultHelper {
     notename: string,
     app: App,
   ): Promise<TFile | void>[] {
-    let promisesToCreateNotes: Promise<TFile | void>[] = [];
+    const promisesToCreateNotes: Promise<TFile | void>[] = [];
     tasks.forEach((task) => {
       if (this.getFileByTaskId(path, task.id, app) == undefined) {
         promisesToCreateNotes.push(this.createTaskNote(path, task, template, notename, app));
@@ -108,7 +108,7 @@ export class VaultHelper {
 
       tasks.forEach((task: Task) => {
         if (task.state === column) {
-          let file = this.getFileByTaskId(path, task.id, app);
+          const file = this.getFileByTaskId(path, task.id, app);
           if (file != undefined) {
             if (teamLeaderMode) {
               boardMD += `- [ ] [[${file.basename}]] \n ${task.assignedTo} \n ${task.title}\n`;
@@ -133,8 +133,8 @@ export class VaultHelper {
     template: string,
     notename: string,
     app: App,
-  ): Promise<TFile> {
-    let filename = notename
+  ): Promise<TFile | void> {
+    const filename = notename
       .replace(/{{TASK_ID}}/g, task.id)
       .replace(/{{TASK_STATE}}/g, task.state)
       .replace(/{{TASK_TYPE}}/g, task.type.replace(/ /g, ''))
@@ -148,45 +148,19 @@ export class VaultHelper {
       .replace(/{{TASK_STATE}}/g, task.state.replace(/ /g, ''))
       .replace(/{{TASK_TYPE}}/g, task.type.replace(/ /g, ''))
       .replace(/{{TASK_ASSIGNEDTO}}/g, task.assignedTo)
-      .replace(/{{TASK_LINK}}/g, task.link);
+      .replace(/{{TASK_LINK}}/g, task.link)
+      .replace(/{{TASK_DESCRIPTION}}/g, task.desc ?? '')
+      .replace(/{{TASK_DUEDATE}}/g, task.dueDate ?? '');
 
-    if (task.createdDate != null) {
-      content = content.replace(/{{TASK_CREATED}}/g, task.createdDate);
-    } else {
-      content = content.replace(/{{TASK_CREATED}}/g, '');
+    if (task instanceof JiraTask) {
+      content = content.replace(/{{TASK_CREATED}}/g, task.createdDate ?? '')
+    } else if (task instanceof AzureDevOpsTask){
+      content = content.replace(/{{TASK_TAGS}}/g, task.tags ?? '')
+      .replace(/{{TASK_CRITERIA}}/g, task.criteria ?? '')
+      .replace(/{{TASK_TESTS}}/g, task.testScenarios ?? '');
     }
 
-    if (task.dueDate != null) {
-      content = content.replace(/{{TASK_DUEDATE}}/g, task.dueDate);
-    } else {
-      content = content.replace(/{{TASK_DUEDATE}}/g, '');
-    }
-
-    if (task.tags != null) {
-      content = content.replace(/{{TASK_TAGS}}/g, task.tags);
-    } else {
-      content = content.replace(/{{TASK_TAGS}}/g, '');
-    }
-
-    if (task.desc != null) {
-      content = content.replace(/{{TASK_DESCRIPTION}}/g, task.desc);
-    } else {
-      content = content.replace(/{{TASK_DESCRIPTION}}/g, '');
-    }
-
-    if (task.criteria != null) {
-      content = content.replace(/{{TASK_CRITERIA}}/g, task.criteria);
-    } else {
-      content = content.replace(/{{TASK_CRITERIA}}/g, '');
-    }
-
-    if (task.testScenarios != null) {
-      content = content.replace(/{{TASK_TESTS}}/g, task.testScenarios);
-    } else {
-      content = content.replace(/{{TASK_TESTS}}/g, '');
-    }
-
-    const file = this.getFileByTaskId(path, task.id);
+    const file = this.getFileByTaskId(path, task.id, app);
     if (file == undefined) {
       return app.vault.create(filepath, content);
     } else {

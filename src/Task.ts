@@ -3,7 +3,19 @@
  * Optional fields are only available in Azure for now.
  * @public
  */
-export class Task {
+
+export interface Task {
+  id: string;
+  state: string;
+  title: string;
+  type: string;
+  assignedTo: string;
+  link: string;
+  desc: string;
+  dueDate?: string;
+}
+
+export class AzureDevOpsTask implements Task {
   public id: string;
   public state: string;
   public title: string;
@@ -11,24 +23,28 @@ export class Task {
   public assignedTo: string;
   public link: string;
   public desc: string;
+  public dueDate?: string;
   public criteria?: string;
   public testScenarios?: string;
-  public createdDate?: string;
-  public dueDate?: string;
   public tags?: string;
 
-  constructor(args) {
-    this.id = args.id;
-    this.state = args.state;
-    this.title = args.title;
-    this.type = args.type;
-    this.assignedTo = args.assignedTo;
-    this.link = args.link;
-    this.desc = args.desc;
-    this.criteria = args.criteria ?? null;
-    this.testScenarios = args.testScenarios ?? null;
-    this.createdDate = args.createdDate ?? null;
-    this.dueDate = args.dueDate ?? null;
-    this.tags = args.tags ?? null;
+  constructor(source: Partial<AzureDevOpsTask>) {
+    Object.assign(this, source);
+  }
+}
+
+export class JiraTask implements Task {
+  public id: string;
+  public state: string;
+  public title: string;
+  public type: string;
+  public assignedTo: string;
+  public link: string;
+  public desc: string;
+  public dueDate?: string;
+  public createdDate?: string;
+
+  constructor(source: Partial<JiraTask>) {
+    Object.assign(this, source);
   }
 }
