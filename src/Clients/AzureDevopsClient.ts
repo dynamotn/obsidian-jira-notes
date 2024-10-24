@@ -145,20 +145,19 @@ export class AzureDevopsClient implements ITfsClient {
           : 'No description provided';
 
         tasks.push(
-          new Task(
-            task.id,
-            task.fields['System.State'],
-            task.fields['System.Title'],
-            task.fields['System.WorkItemType'],
-            assigneeName,
-            `https://${settings.azureDevopsSettings.instance}/${settings.azureDevopsSettings.collection}/${settings.azureDevopsSettings.project}/_workitems/edit/${task.id}`,
-            description,
-            acceptanceCriteria,
-            testScenarios,
-            null,
-            dueDate,
-            replacedTags
-          )
+          new Task({
+            id: task.id,
+            state: task.fields['System.State'],
+            title:task.fields['System.Title'],
+            type: task.fields['System.WorkItemType'],
+            assignedTo: assigneeName,
+            link: `https://${settings.azureDevopsSettings.instance}/${settings.azureDevopsSettings.collection}/${settings.azureDevopsSettings.project}/_workitems/edit/${task.id}`,
+            desc: description,
+            criteria: acceptanceCriteria,
+            testScenarios: testScenarios,
+            dueDate: dueDate,
+            tags: replacedTags,
+          })
         );
       });
 

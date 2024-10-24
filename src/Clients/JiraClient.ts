@@ -106,20 +106,17 @@ export class JiraClient implements ITfsClient {
             }
 
             tasks.push(
-              new Task(
-                issue.key,
-                issue.fields['status']['name'],
-                issue.fields['summary'],
-                issue.fields['issuetype']['name'],
-                assigneeName,
-                `https://${settings.jiraSettings.baseUrl}/browse/${issue.key}`,
-                issue.fields['description'],
-                null,
-                null,
-                null,
-                issue.fields['created'],
-                issue.fields['duedate'],
-              )
+              new Task({
+                id: issue.key,
+                state: issue.fields['status']['name'],
+                title: issue.fields['summary'],
+                type: issue.fields['issuetype']['name'],
+                assignedTo: assigneeName,
+                link: `https://${settings.jiraSettings.baseUrl}/browse/${issue.key}`,
+                desc: issue.fields['description'],
+                createdDate: issue.fields['created'],
+                dueDate: issue.fields['duedate'],
+              })
             );
           });
         });
@@ -192,20 +189,17 @@ export class JiraClient implements ITfsClient {
                 assigneeName = assignee['displayName'];
               }
 
-              let taskObj = new Task(
-                issue.key,
-                issue.fields['status']['name'],
-                issue.fields['summary'],
-                issue.fields['issuetype']['name'],
-                assigneeName,
-                `https://${settings.jiraSettings.baseUrl}/browse/${issue.key}`,
-                issue.fields['description'],
-                null,
-                null,
-                null,
-                issue.fields['created'],
-                issue.fields['duedate'],
-              );
+              const taskObj = new Task({
+                id: issue.key,
+                state: issue.fields['status']['name'],
+                title: issue.fields['summary'],
+                type: issue.fields['issuetype']['name'],
+                assignedTo: assigneeName,
+                link: `https://${settings.jiraSettings.baseUrl}/browse/${issue.key}`,
+                desc: issue.fields['description'],
+                createdDate: issue.fields['created'],
+                dueDate: issue.fields['duedate'],
+              });
 
               if (issue.fields['resolution'] != null) {
                 completedTasks.push(taskObj);

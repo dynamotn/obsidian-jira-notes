@@ -18,18 +18,18 @@ export class Task {
   public dueDate?: string;
   public tags?: string;
 
-  constructor(id: string, state: string, title: string, type: string, assignedTo: string, link: string, desc: string, criteria?: string, testScenarios?: string, createdDate?: string, dueDate?: string, tags?: string) {
-    this.id = id;
-    this.state = state;
-    this.title = title;
-    this.type = type;
-    this.assignedTo = assignedTo;
-    this.link = link;
-    this.desc = desc;
-    this.criteria = criteria;
-    this.testScenarios = testScenarios;
-    this.createdDate = createdDate;
-    this.dueDate = dueDate;
-    this.tags = tags;
+  constructor(args) {
+    this.id = args.id;
+    this.state = args.state;
+    this.title = args.title;
+    this.type = args.type;
+    this.assignedTo = args.assignedTo;
+    this.link = args.link;
+    this.desc = args.desc;
+    this.criteria = args.criteria ?? null;
+    this.testScenarios = args.testScenarios ?? null;
+    this.createdDate = args.createdDate ?? null;
+    this.dueDate = args.dueDate ?? null;
+    this.tags = args.tags ?? null;
   }
 }
