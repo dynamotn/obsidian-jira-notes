@@ -67,7 +67,7 @@ export class VaultHelper {
     tasks: Array<Task>,
     template: string,
     notename: string,
-    app: App
+    app: App,
   ): Promise<TFile | void>[] {
     let promisesToCreateNotes: Promise<TFile | void>[] = [];
     tasks.forEach((task) => {
@@ -93,7 +93,7 @@ export class VaultHelper {
     columns: Array<string>,
     prefix: string,
     teamLeaderMode: boolean,
-    app: App
+    app: App,
   ): Promise<void> {
     const filename = `${prefix}-Board`;
     const filepath = path + `/${filename}.md`;
@@ -132,7 +132,7 @@ export class VaultHelper {
     task: Task,
     template: string,
     notename: string,
-    app: App
+    app: App,
   ): Promise<TFile> {
     let filename = notename
       .replace(/{{TASK_ID}}/g, task.id)
@@ -145,7 +145,7 @@ export class VaultHelper {
     let content = template
       .replace(/{{TASK_ID}}/g, task.id)
       .replace(/{{TASK_TITLE}}/g, task.title)
-      .replace(/{{TASK_STATE}}/g, task.state.replace(/ /g,''))
+      .replace(/{{TASK_STATE}}/g, task.state.replace(/ /g, ''))
       .replace(/{{TASK_TYPE}}/g, task.type.replace(/ /g, ''))
       .replace(/{{TASK_ASSIGNEDTO}}/g, task.assignedTo)
       .replace(/{{TASK_LINK}}/g, task.link);

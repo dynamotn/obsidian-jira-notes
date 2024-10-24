@@ -24,12 +24,12 @@ export const AZURE_DEVOPS_DEFAULT_SETTINGS: AzureDevopsSettings = {
   columns: 'Pending,In Progress,In Merge,In Verification,Closed',
 };
 
-const TASKS_QUERY: string =
+const TASKS_QUERY =
   '{"query": "Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.IterationPath] UNDER \\"{0}\\"{1}"}'; // iteration path, other(usernames)
-const USER_OPERAND: string = '[Assigned to] = \\"{0}\\"';
+const USER_OPERAND = '[Assigned to] = \\"{0}\\"';
 
 export class AzureDevopsClient implements ITfsClient {
-  clientName: string = 'AzureDevops';
+  clientName = 'AzureDevops';
 
   constructor(private app: App) {}
 
@@ -106,11 +106,11 @@ export class AzureDevopsClient implements ITfsClient {
             method: 'GET',
             headers: headers,
             url: task.url,
-          }).then((r) => r.json)
-        )
+          }).then((r) => r.json),
+        ),
       );
 
-      let tasks: Array<Task> = [];
+      const tasks: Array<Task> = [];
       assignedTasks.forEach((task: any) => {
         let assigneeName = 'Unassigned';
         const assignee = task.fields['System.AssignedTo'] ?? null;
@@ -118,15 +118,15 @@ export class AzureDevopsClient implements ITfsClient {
           assigneeName = assignee['displayName'];
         }
 
-        let tags = task.fields['System.Tags'] || '';
-        let replacedTags = tags
+        const tags = task.fields['System.Tags'] || '';
+        const replacedTags = tags
           .split(';')
           .map((part: string) =>
             part
               .trim()
               .split(' ')
               .map((word) => word.replace(/\s+/g, '-'))
-              .join('-')
+              .join('-'),
           )
           .filter(Boolean)
           .join(' ');
@@ -148,7 +148,7 @@ export class AzureDevopsClient implements ITfsClient {
           new Task({
             id: task.id,
             state: task.fields['System.State'],
-            title:task.fields['System.Title'],
+            title: task.fields['System.Title'],
             type: task.fields['System.WorkItemType'],
             assignedTo: assigneeName,
             link: `https://${settings.azureDevopsSettings.instance}/${settings.azureDevopsSettings.collection}/${settings.azureDevopsSettings.project}/_workitems/edit/${task.id}`,
@@ -157,13 +157,13 @@ export class AzureDevopsClient implements ITfsClient {
             testScenarios: testScenarios,
             dueDate: dueDate,
             tags: replacedTags,
-          })
+          }),
         );
       });
 
       // Create markdown files based on remote task in current sprint
       await Promise.all(
-        VaultHelper.createTaskNotes(normalizedFolderPath, tasks, settings.noteTemplate, settings.noteName, this.app)
+        VaultHelper.createTaskNotes(normalizedFolderPath, tasks, settings.noteTemplate, settings.noteName, this.app),
       ).catch((e) => VaultHelper.logError(e));
 
       if (settings.createKanban) {
@@ -177,7 +177,7 @@ export class AzureDevopsClient implements ITfsClient {
           columnIds,
           currentSprint.name,
           settings.teamLeaderMode,
-          this.app
+          this.app,
         ).catch((e) => VaultHelper.logError(e));
       }
     } catch (e) {
@@ -188,7 +188,7 @@ export class AzureDevopsClient implements ITfsClient {
   public setupSettings(
     container: HTMLElement,
     plugin: AgileTaskNotesPlugin,
-    settingsTab: AgileTaskNotesPluginSettingTab
+    settingsTab: AgileTaskNotesPluginSettingTab,
   ): any {
     container.createEl('h2', { text: 'AzureDevops Remote Repo Settings' });
 
@@ -202,7 +202,7 @@ export class AzureDevopsClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.azureDevopsSettings.instance = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(container)
@@ -215,7 +215,7 @@ export class AzureDevopsClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.azureDevopsSettings.collection = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(container)
@@ -228,7 +228,7 @@ export class AzureDevopsClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.azureDevopsSettings.project = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(container)
@@ -241,13 +241,13 @@ export class AzureDevopsClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.azureDevopsSettings.team = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(container)
       .setName('Usernames')
       .setDesc(
-        'A comma-separated list of usernames you want the tasks of. Simply put your username if you only need your own.'
+        'A comma-separated list of usernames you want the tasks of. Simply put your username if you only need your own.',
       )
       .addText((text) =>
         text
@@ -256,7 +256,7 @@ export class AzureDevopsClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.azureDevopsSettings.usernames = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(container)
@@ -269,7 +269,7 @@ export class AzureDevopsClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.azureDevopsSettings.accessToken = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(container)
@@ -282,7 +282,7 @@ export class AzureDevopsClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.azureDevopsSettings.columns = value;
             await plugin.saveSettings();
-          })
+          }),
       );
   }
 }

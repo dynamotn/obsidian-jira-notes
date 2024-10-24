@@ -29,18 +29,18 @@ export const JIRA_DEFAULT_SETTINGS: JiraSettings = {
 };
 
 export class JiraClient implements ITfsClient {
-  clientName: string = 'Jira';
+  clientName = 'Jira';
 
   constructor(private app: App) {}
 
   public async update(settings: AgileTaskNotesSettings): Promise<void> {
-    let headers = {
+    const headers = {
       Authorization: '',
       'Content-Type': 'application/json',
     };
     if (settings.jiraSettings.authmode == 'basic') {
       const encoded64Key = Buffer.from(`${settings.jiraSettings.email}:${settings.jiraSettings.apiToken}`).toString(
-        'base64'
+        'base64',
       );
       headers.Authorization = `Basic ${encoded64Key}`;
     } else if ((settings.jiraSettings.authmode = 'bearer')) {
@@ -72,7 +72,7 @@ export class JiraClient implements ITfsClient {
         // Ensure folder structure created
         VaultHelper.createFolders(normalizedFolderPath, this.app);
 
-        let tasks: Array<Task> = [];
+        const tasks: Array<Task> = [];
         let issueResponseList: Array<RequestUrlResponse> = [];
 
         if (settings.teamLeaderMode) {
@@ -82,7 +82,7 @@ export class JiraClient implements ITfsClient {
             url: `${BaseURL}/board/${settings.jiraSettings.boardId}/sprint/${currentSprintId}/issue?maxResults=1000`,
           });
         } else {
-          let usernames = settings.jiraSettings.usernames
+          const usernames = settings.jiraSettings.usernames
             .split(',')
             .map((username: string) => username.trim().replace("'", "\\'"));
 
@@ -92,15 +92,15 @@ export class JiraClient implements ITfsClient {
                 method: 'GET',
                 headers: headers,
                 url: `${BaseURL}/board/${settings.jiraSettings.boardId}/sprint/${currentSprintId}/issue?jql=assignee="${username}"&maxResults=1000`,
-              })
-            )
+              }),
+            ),
           );
         }
 
         issueResponseList.forEach((issueResponse: any) => {
           issueResponse.json.issues.forEach((issue: any) => {
             let assigneeName = 'Unassigned';
-            let assignee = issue.fields['assignee'];
+            const assignee = issue.fields['assignee'];
             if (assignee !== null) {
               assigneeName = assignee['displayName'];
             }
@@ -116,14 +116,14 @@ export class JiraClient implements ITfsClient {
                 desc: issue.fields['description'],
                 createdDate: issue.fields['created'],
                 dueDate: issue.fields['duedate'],
-              })
+              }),
             );
           });
         });
 
         // Create markdown files based on remote task in current sprint
         await Promise.all(
-          VaultHelper.createTaskNotes(normalizedFolderPath, tasks, settings.noteTemplate, settings.noteName, this.app)
+          VaultHelper.createTaskNotes(normalizedFolderPath, tasks, settings.noteTemplate, settings.noteName, this.app),
         );
 
         if (settings.createKanban) {
@@ -141,7 +141,7 @@ export class JiraClient implements ITfsClient {
             columnIds,
             sprintIdentifier,
             settings.teamLeaderMode,
-            this.app
+            this.app,
           );
         }
       } else if (settings.jiraSettings.mode == 'kanban') {
@@ -152,8 +152,8 @@ export class JiraClient implements ITfsClient {
         // Ensure folder structures created
         VaultHelper.createFoldersFromList([normalizedBaseFolderPath, normalizedCompletedfolderPath], this.app);
 
-        let activeTasks: Array<Task> = [];
-        let completedTasks: Array<Task> = [];
+        const activeTasks: Array<Task> = [];
+        const completedTasks: Array<Task> = [];
         let issueResponseList: Array<RequestUrlResponse> = [];
 
         if (settings.teamLeaderMode) {
@@ -163,7 +163,7 @@ export class JiraClient implements ITfsClient {
             url: `${BaseURL}/board/${settings.jiraSettings.boardId}/issue?maxResults=1000`,
           });
         } else {
-          let usernames = settings.jiraSettings.usernames
+          const usernames = settings.jiraSettings.usernames
             .split(',')
             .map((username: string) => username.trim().replace("'", "\\'"));
           issueResponseList = await Promise.all(
@@ -172,8 +172,8 @@ export class JiraClient implements ITfsClient {
                 method: 'GET',
                 headers: headers,
                 url: `${BaseURL}/board/${settings.jiraSettings.boardId}/issue?jql=assignee="${username}"&maxResults=1000`,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -184,7 +184,7 @@ export class JiraClient implements ITfsClient {
               (settings.jiraSettings.excludeBacklog && issue.fields['status']['name'] !== 'Backlog')
             ) {
               let assigneeName = 'Unassigned';
-              let assignee = issue.fields['assignee'];
+              const assignee = issue.fields['assignee'];
               if (assignee !== null) {
                 assigneeName = assignee['displayName'];
               }
@@ -217,8 +217,8 @@ export class JiraClient implements ITfsClient {
             activeTasks,
             settings.noteTemplate,
             settings.noteName,
-            this.app
-          )
+            this.app,
+          ),
         );
         await Promise.all(
           VaultHelper.createTaskNotes(
@@ -226,8 +226,8 @@ export class JiraClient implements ITfsClient {
             completedTasks,
             settings.noteTemplate,
             settings.noteName,
-            this.app
-          )
+            this.app,
+          ),
         );
 
         // Move pre-existing notes that became resolved state into the Completed folder and vise versa
@@ -235,13 +235,13 @@ export class JiraClient implements ITfsClient {
           .map((task) => VaultHelper.getFileByTaskId(settings.targetFolder, task.id, this.app))
           .filter((file): file is TFile => !!file);
         completedTaskNoteFiles.forEach((file) =>
-          this.app.vault.rename(file, normalizePath(completedFolder + file.name))
+          this.app.vault.rename(file, normalizePath(completedFolder + file.name)),
         );
         const activeTaskNoteFiles = activeTasks
           .map((task) => VaultHelper.getFileByTaskId(settings.targetFolder, task.id, this.app))
           .filter((file): file is TFile => !!file);
         activeTaskNoteFiles.forEach((file) =>
-          this.app.vault.rename(file, normalizePath(settings.targetFolder + '/' + file.name))
+          this.app.vault.rename(file, normalizePath(settings.targetFolder + '/' + file.name)),
         );
 
         if (settings.createKanban) {
@@ -263,7 +263,7 @@ export class JiraClient implements ITfsClient {
             columnIds,
             settings.jiraSettings.boardId,
             settings.teamLeaderMode,
-            this.app
+            this.app,
           );
         }
       }
@@ -275,7 +275,7 @@ export class JiraClient implements ITfsClient {
   public setupSettings(
     container: HTMLElement,
     plugin: AgileTaskNotesPlugin,
-    settingsTab: AgileTaskNotesPluginSettingTab
+    settingsTab: AgileTaskNotesPluginSettingTab,
   ): any {
     container.createEl('h2', { text: 'Jira Remote Repo Settings' });
 
@@ -289,13 +289,13 @@ export class JiraClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.jiraSettings.baseUrl = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(container)
       .setName('Usernames')
       .setDesc(
-        'A comma-separated list of usernames you want the tasks of. Simply put your username if you only need your own.'
+        'A comma-separated list of usernames you want the tasks of. Simply put your username if you only need your own.',
       )
       .addText((text) =>
         text
@@ -304,7 +304,7 @@ export class JiraClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.jiraSettings.usernames = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(container)
@@ -317,7 +317,7 @@ export class JiraClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.jiraSettings.email = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(container)
@@ -342,7 +342,7 @@ export class JiraClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.jiraSettings.apiToken = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(container)
@@ -355,7 +355,7 @@ export class JiraClient implements ITfsClient {
           .onChange(async (value) => {
             plugin.settings.jiraSettings.boardId = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(container)
@@ -379,7 +379,7 @@ export class JiraClient implements ITfsClient {
           text.setValue(plugin.settings.jiraSettings.useSprintName).onChange(async (value) => {
             plugin.settings.jiraSettings.useSprintName = value;
             await plugin.saveSettings();
-          })
+          }),
         );
     } else if (plugin.settings.jiraSettings.mode === 'kanban') {
       new Setting(container)
@@ -389,7 +389,7 @@ export class JiraClient implements ITfsClient {
           toggle.setValue(plugin.settings.jiraSettings.excludeBacklog).onChange(async (value) => {
             plugin.settings.jiraSettings.excludeBacklog = value;
             await plugin.saveSettings();
-          })
+          }),
         );
     }
   }

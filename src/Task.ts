@@ -1,9 +1,8 @@
-
 /**
-   * Simple data class that allows for generalization of a task from any TFS
-   * Optional fields are only available in Azure for now.
-   * @public
-   */
+ * Simple data class that allows for generalization of a task from any TFS
+ * Optional fields are only available in Azure for now.
+ * @public
+ */
 export class Task {
   public id: string;
   public state: string;

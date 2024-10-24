@@ -64,8 +64,8 @@ export default class AgileTaskNotesPlugin extends Plugin {
       this.registerInterval(
         window.setInterval(
           () => this.tfsClientImplementations[this.settings.selectedTfsClient].update(this.settings),
-          this.settings.intervalMinutes * 60000
-        )
+          this.settings.intervalMinutes * 60000,
+        ),
       );
     }
   }
@@ -113,7 +113,7 @@ export class AgileTaskNotesPluginSettingTab extends PluginSettingTab {
         toggle.setValue(plugin.settings.teamLeaderMode).onChange(async (value) => {
           plugin.settings.teamLeaderMode = value;
           await plugin.saveSettings();
-        })
+        }),
       );
 
     plugin.tfsClientImplementations[plugin.settings.selectedTfsClient].setupSettings(containerEl, plugin, this);
@@ -130,13 +130,13 @@ export class AgileTaskNotesPluginSettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             plugin.settings.targetFolder = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(containerEl)
       .setName('Inital Task Content')
       .setDesc(
-        'Set the inital content for each new task note. Available variables: {{TASK_ID}}, {{TASK_TITLE}}, {{TASK_TYPE}}, {{TASK_STATE}}, {{TASK_ASSIGNEDTO}}, {{TASK_LINK}}, {{TASK_DESCRIPTION}} Only For Azure: {{TASK_DUEDATE}} {{TASK_TAGS}} {{TASK_CRITERIA}} {{TASK_TESTS}}'
+        'Set the inital content for each new task note. Available variables: {{TASK_ID}}, {{TASK_TITLE}}, {{TASK_TYPE}}, {{TASK_STATE}}, {{TASK_ASSIGNEDTO}}, {{TASK_LINK}}, {{TASK_DESCRIPTION}} Only For Azure: {{TASK_DUEDATE}} {{TASK_TAGS}} {{TASK_CRITERIA}} {{TASK_TESTS}}',
       )
       .addTextArea((text) => {
         text
@@ -156,7 +156,7 @@ export class AgileTaskNotesPluginSettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName('Note Name')
       .setDesc(
-        'Set the format of the file name for each task note. Available variables: {{TASK_ID}}, {{TASK_TYPE}}, {{TASK_STATE}}, {{TASK_ASSIGNEDTO}}'
+        'Set the format of the file name for each task note. Available variables: {{TASK_ID}}, {{TASK_TYPE}}, {{TASK_STATE}}, {{TASK_ASSIGNEDTO}}',
       )
       .addText((text) =>
         text
@@ -165,13 +165,13 @@ export class AgileTaskNotesPluginSettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             plugin.settings.noteName = value;
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(containerEl)
       .setName('Update interval')
       .setDesc(
-        "Interval (in minutes) to periodically update the kanban board and notes. Set to 0 for only manual updating. You'll need to restart Obsidian for this to take effect. Note: when an update occurs it will close the kanban board if it is open thus a number over 10 mins is recommended."
+        "Interval (in minutes) to periodically update the kanban board and notes. Set to 0 for only manual updating. You'll need to restart Obsidian for this to take effect. Note: when an update occurs it will close the kanban board if it is open thus a number over 10 mins is recommended.",
       )
       .addText((text) =>
         text
@@ -180,19 +180,19 @@ export class AgileTaskNotesPluginSettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             plugin.settings.intervalMinutes = parseInt(value);
             await plugin.saveSettings();
-          })
+          }),
       );
 
     new Setting(containerEl)
       .setName('Create Kanban board?')
       .setDesc(
-        'Should a Kanban board be generated for the current sprint (requires the Kanban board plugin in addition to this one)'
+        'Should a Kanban board be generated for the current sprint (requires the Kanban board plugin in addition to this one)',
       )
       .addToggle((toggle) =>
         toggle.setValue(plugin.settings.createKanban).onChange(async (value) => {
           plugin.settings.createKanban = value;
           await plugin.saveSettings();
-        })
+        }),
       );
   }
 }
